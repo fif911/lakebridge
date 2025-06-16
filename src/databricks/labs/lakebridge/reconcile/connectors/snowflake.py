@@ -73,6 +73,8 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
             f"&db={self._get_secret('sfDatabase')}&schema={self._get_secret('sfSchema')}"
             f"&warehouse={self._get_secret('sfWarehouse')}&role={self._get_secret('sfRole')}"
         )
+        print("JDBC URL:")
+        print(jdbc_str)
         return jdbc_str
 
     @staticmethod
