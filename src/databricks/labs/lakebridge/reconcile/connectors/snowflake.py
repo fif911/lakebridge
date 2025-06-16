@@ -162,6 +162,7 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
             "sfUrl": self._get_secret('sfUrl'),
             "sfUser": self._get_secret('sfUser'),
             "sfDatabase": self._get_secret('sfDatabase'),
+            "sfAccount": self._get_secret('sfAccount'),
             "sfSchema": self._get_secret('sfSchema'),
             "sfWarehouse": self._get_secret('sfWarehouse'),
             "sfRole": self._get_secret('sfRole'),
