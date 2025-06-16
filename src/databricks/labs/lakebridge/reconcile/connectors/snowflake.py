@@ -157,6 +157,7 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
             return self.log_and_throw_exception(e, "schema", schema_query)
 
     def reader(self, query: str) -> DataFrameReader:
+        print("--- reader ---")
         options = {
             "sfUrl": self._get_secret('sfUrl'),
             "sfUser": self._get_secret('sfUser'),
