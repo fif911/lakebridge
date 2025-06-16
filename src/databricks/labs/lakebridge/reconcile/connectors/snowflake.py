@@ -158,6 +158,7 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
             "sfSchema": self._get_secret('sfSchema'),
             "sfWarehouse": self._get_secret('sfWarehouse'),
             "sfRole": self._get_secret('sfRole'),
+            "insecureMode": "true",
         }
         try:
             options["pem_private_key"] = SnowflakeDataSource.get_private_key(self._get_secret('pem_private_key'))
