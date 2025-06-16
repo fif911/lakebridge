@@ -109,16 +109,22 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
         options: JdbcReaderOptions | None,
     ) -> DataFrame:
         table_query = query.replace(":tbl", f"{catalog}.{schema}.{table}")
+        print("--- read_data ----")
         try:
             if options is None:
+                print("options is None")
                 df = self.reader(table_query).load()
             else:
+                print("options is NOT None")
                 options = self._get_jdbc_reader_options(options)
+                print(options)
+                print("Connecting...")
                 df = (
                     self._get_jdbc_reader(table_query, self.get_jdbc_url, SnowflakeDataSource._DRIVER)
                     .options(**options)
                     .load()
                 )
+                print("Loaded")
             return df.select([col(column).alias(column.lower()) for column in df.columns])
         except (RuntimeError, PySparkException) as e:
             return self.log_and_throw_exception(e, "data", table_query)
