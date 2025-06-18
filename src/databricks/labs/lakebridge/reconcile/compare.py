@@ -63,13 +63,18 @@ def reconcile_data(
             *[f'{target_alias}.{col_name} as {target_alias}_{col_name}' for col_name in target.columns],
         )
     )
-
+    print("COMPARE: Print DF")
+    print(df)
+    
     # Write unmatched df to volume
     df = ReconIntermediatePersist(spark, path).write_and_read_unmatched_df_with_volumes(df)
     logger.warning(f"Unmatched data is written to {path} successfully")
 
     mismatch = _get_mismatch_data(df, source_alias, target_alias) if report_type in {"all", "data"} else None
 
+    print("COMPARE: mismatch")
+    print(mismatch)
+    
     missing_in_src = (
         df.filter(col(f"{source_alias}_{_HASH_COLUMN_NAME}").isNull())
         .select(
@@ -96,6 +101,8 @@ def reconcile_data(
     mismatch_count = 0
     if mismatch:
         mismatch_count = mismatch.count()
+        print("mismatch count")
+        print(mismatch_count)
 
     missing_in_src_count = missing_in_src.count()
     missing_in_tgt_count = missing_in_tgt.count()
