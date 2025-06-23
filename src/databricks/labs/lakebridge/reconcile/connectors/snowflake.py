@@ -82,9 +82,11 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
     def get_private_key(pem_private_key: str, pem_private_key_password: str) -> str:
         try:
             private_key_bytes = pem_private_key.encode("UTF-8")
+            password_bytes = pem_private_key_password.encode("UTF-8") if pem_private_key_password else None
+
             p_key = serialization.load_pem_private_key(
                 private_key_bytes,
-                password=pem_private_key_password,
+                password=password_bytes,
                 backend=default_backend(),
             )
             pkb = p_key.private_bytes(
