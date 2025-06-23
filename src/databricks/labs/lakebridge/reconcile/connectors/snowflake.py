@@ -1,6 +1,7 @@
 import logging
 import re
 from datetime import datetime
+from urllib.parse import quote_plus
 
 from pyspark.errors import PySparkException
 from pyspark.sql import DataFrame, DataFrameReader, SparkSession
@@ -62,7 +63,7 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
     @property
     def get_jdbc_url(self) -> str:
         try:
-            sf_password = self._get_secret('sfPassword')
+            sf_password = quote_plus(self._get_secret('sfPassword'))
         except (NotFound, KeyError) as e:
             message = "sfPassword is mandatory for jdbc connectivity with Snowflake."
             logger.error(message)
@@ -77,13 +78,12 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
         print(jdbc_str)
         return jdbc_str
 
-    @staticmethod
-    def get_private_key(pem_private_key: str) -> str:
+    def get_private_key(self, pem_private_key: str) -> str:
         try:
             private_key_bytes = pem_private_key.encode("UTF-8")
             p_key = serialization.load_pem_private_key(
                 private_key_bytes,
-                password=None,
+                password=self._get_secret('pem_private_key_password'),
                 backend=default_backend(),
             )
             pkb = p_key.private_bytes(
