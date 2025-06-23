@@ -186,6 +186,6 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
                 message = "sfPassword and pem_private_key not found. Either one is required for snowflake auth."
                 logger.error(message)
                 raise NotFound(message) from e
-        print("reader before connect:")
-        print(options)
+        # print("reader before connect:")
+        # print(options)
         return self._spark.read.format("snowflake").option("dbtable", f"({query}) as tmp").options(**options)
