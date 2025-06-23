@@ -78,12 +78,13 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
         print(jdbc_str)
         return jdbc_str
 
-    def get_private_key(self, pem_private_key: str) -> str:
+    @staticmethod
+    def get_private_key(pem_private_key: str, pem_private_key_password: str) -> str:
         try:
             private_key_bytes = pem_private_key.encode("UTF-8")
             p_key = serialization.load_pem_private_key(
                 private_key_bytes,
-                password=self._get_secret('pem_private_key_password'),
+                password=pem_private_key_password,
                 backend=default_backend(),
             )
             pkb = p_key.private_bytes(
@@ -171,7 +172,10 @@ class SnowflakeDataSource(DataSource, SecretsMixin, JDBCReaderMixin):
             "insecureMode": "true",
         }
         try:
-            options["pem_private_key"] = SnowflakeDataSource.get_private_key(self._get_secret('pem_private_key'))
+            options["pem_private_key"] = SnowflakeDataSource.get_private_key(
+                self._get_secret('pem_private_key'),
+                self._get_secret('pem_private_key_password')
+            )
         except (NotFound, KeyError):
             logger.warning("pem_private_key not found. Checking for sfPassword")
             try:
